@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "firstName": "Jane",
+    "lastName": "Foster",
+    "userName": "jdfoster",
+    "password": "",
+    "passwordSalt": "",
+    "passwordPepper": "",
+    "email": "",
+    "dateCreated": ""
+  },
+  {
+    "id": 2,
+    "firstName": "Richard",
+    "lastName": "Mille",
+    "userName": "richardm19",
+    "password": "",
+    "passwordSalt": "",
+    "passwordPepper": "",
+    "email": "",
+    "dateCreated": ""
+  },
+  {
+    "id": 3,
+    "firstName": "Barry",
+    "lastName": "Bonds",
+    "userName": "thebarrybb88",
+    "password": "",
+    "passwordSalt": "",
+    "passwordPepper": "",
+    "email": "",
+    "dateCreated": ""
+  }
+]
