@@ -1,5 +1,11 @@
 import { readFileSync, writeFileSync } from "fs";
 
+//Generic function used to get data from a specified data object
+export function getData(path) {
+  const data = readFileSync(path, "utf-8");
+  return JSON.parse(data);
+}
+
 //Function used to automatically find the latest ID in a dataset, and return the dataset with an incremented id
 export function incrementId(defaultData, reqBody) {
   const lastId = defaultData[defaultData.length - 1]["id"];
