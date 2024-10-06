@@ -37,4 +37,12 @@ router.post("/", (req, res) => {
   }
 });
 
+//UPDATE USER
+router.post("/update", (req, res) => {
+  const data = req.body;
+  const updatedUser = uh.updateUser(data);
+
+  res.send(updatedUser);
+});
+
 export default router;

@@ -9,11 +9,25 @@ export function getUsers() {
 export function getUser(params) {
   const usersArr = fh.getData(filePath);
 
-  const resultsArr = usersArr.find((obj) => {
+  const resultsArr = usersArr.filter((obj) => {
     return Object.keys(params).every((key) => {
       return obj[key] == params[key];
     });
   });
 
   return resultsArr;
+}
+
+export function updateUser(user) {
+  const usersArr = fh.getData(filePath);
+  const index = usersArr.findIndex((userObj) => userObj.id == user.id);
+
+  if (index !== -1) {
+    for (let key in user) {
+      if (user.hasOwnProperty(key) && usersArr[index][key] !== user[key]) {
+        usersArr[index][key] = user[key];
+      }
+    }
+  }
+  return usersArr[index];
 }
