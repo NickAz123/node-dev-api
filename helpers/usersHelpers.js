@@ -28,6 +28,7 @@ export function updateUser(user) {
         usersArr[index][key] = user[key];
       }
     }
+
+    fh.updateDataFiles(filePath, [usersArr[index]]);
   }
-  return usersArr[index];
 }

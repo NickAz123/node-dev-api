@@ -27,7 +27,7 @@ router.post("/", (req, res) => {
   const data = req.body;
 
   try {
-    fh.writeToDataFile(filePath, data);
+    fh.addToDataFile(filePath, data);
 
     res.status(200).json({ message: "Data added successfully!" });
   } catch (error) {
