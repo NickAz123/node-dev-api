@@ -23,7 +23,7 @@ router.get("/user", (req, res) => {
 
 //POST PATHS
 //ADD USER
-router.post("/", (req, res) => {
+router.put("/", (req, res) => {
   const data = req.body;
 
   try {
@@ -38,11 +38,11 @@ router.post("/", (req, res) => {
 });
 
 //UPDATE USER
-router.post("/update", (req, res) => {
+router.patch("/update", (req, res) => {
   const data = req.body;
-  const updatedUser = uh.updateUser(data);
+  const updatedUsers = uh.updateUsers(data);
 
-  res.send(updatedUser);
+  res.send(updatedUsers);
 });
 
 export default router;

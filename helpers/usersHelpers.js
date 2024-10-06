@@ -18,17 +18,28 @@ export function getUser(params) {
   return resultsArr;
 }
 
-export function updateUser(user) {
+export function updateUsers(data) {
   const usersArr = fh.getData(filePath);
-  const index = usersArr.findIndex((userObj) => userObj.id == user.id);
+  var foundData = false;
 
-  if (index !== -1) {
-    for (let key in user) {
-      if (user.hasOwnProperty(key) && usersArr[index][key] !== user[key]) {
-        usersArr[index][key] = user[key];
+  data.forEach((userObj) => {
+    const index = usersArr.findIndex((user) => user.id == userObj.id);
+
+    if (index !== -1) {
+      for (let key in userObj) {
+        if (
+          userObj.hasOwnProperty(key) &&
+          usersArr[index][key] !== userObj[key]
+        ) {
+          usersArr[index][key] = userObj[key];
+        }
       }
     }
 
-    fh.updateDataFiles(filePath, [usersArr[index]]);
+    foundData = true;
+  });
+
+  if (foundData) {
+    fh.updateDataFiles(filePath, usersArr);
   }
 }
