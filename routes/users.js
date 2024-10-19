@@ -43,12 +43,12 @@ router.patch("/update", (req, res) => {
   res.send(updatedUsers);
 });
 
-//DELETE USER
+//DELETE USERS
 router.delete("/delete", (req, res) => {
-  const queryParams = req.query;
+  const idArray = req.body.ids;
 
   try {
-    uh.deleteUsers(queryParams);
+    uh.deleteUsers(idArray);
     res.status(200).json({ message: "Data deleted!" });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });

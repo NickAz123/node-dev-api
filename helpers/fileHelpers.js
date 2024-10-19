@@ -50,11 +50,13 @@ function writeToDataFile(dataPath, data) {
   });
 }
 
-export function deleteFromDataFile(dataPath, data) {
+export function deleteFromDataFile(dataPath, idArray) {
   var defaultData = getData(dataPath);
 
-  data.forEach((deletedObj) => {
-    const index = defaultData.findIndex((obj) => obj.id === deletedObj.id);
+  idArray.forEach((id) => {
+    const index = defaultData.findIndex(
+      (obj) => obj.id == id && obj.isDeleted == false
+    );
 
     if (index !== -1) {
       defaultData[index].isDeleted = true;

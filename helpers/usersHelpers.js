@@ -49,8 +49,6 @@ export function updateUsers(data) {
   }
 }
 
-export function deleteUsers(params) {
-  const users = getUser(params);
-
-  fh.deleteFromDataFile(filePath, users);
+export function deleteUsers(idArray) {
+  fh.deleteFromDataFile(filePath, idArray);
 }
