@@ -9,7 +9,8 @@
     "passwordPepper": "",
     "email": "",
     "dateCreated": "",
-    "lastUpdated": ""
+    "lastUpdated": "",
+    "isDeleted": false
   },
   {
     "id": 2,
@@ -21,7 +22,8 @@
     "passwordPepper": "",
     "email": "",
     "dateCreated": "",
-    "lastUpdated": ""
+    "lastUpdated": "",
+    "isDeleted": true
   },
   {
     "id": 3,
@@ -33,6 +35,7 @@
     "passwordPepper": "",
     "email": "",
     "dateCreated": "",
-    "lastUpdated": "toy"
+    "lastUpdated": "toy",
+    "isDeleted": false
   }
 ]

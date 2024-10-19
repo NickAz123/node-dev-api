@@ -16,8 +16,10 @@ export function incrementId(defaultData, reqBody) {
 
 //Generic Helper Function used to write/push new data to any of the default data sets, with automatic incrementation
 export function addToDataFile(dataPath, reqBody) {
-  const defaultData = readFileSync(dataPath, "utf-8");
-  const defaultDataJson = JSON.parse(defaultData);
+  // const defaultData = readFileSync(dataPath, "utf-8");
+  // const defaultDataJson = JSON.parse(defaultData);
+
+  const defaultDataJson = getData(datapath);
 
   const newData = incrementId(defaultDataJson, reqBody);
   defaultDataJson.push(newData);
@@ -33,10 +35,9 @@ export function updateDataFiles(dataPath, newData) {
     const index = defaultData.findIndex((obj) => obj.id === newObj.id);
     if (index !== -1) {
       defaultData[index] = { ...defaultData[index], ...newObj };
+      writeToDataFile(dataPath, defaultData);
     }
   });
-
-  writeToDataFile(dataPath, defaultData);
 }
 
 function writeToDataFile(dataPath, data) {
@@ -45,6 +46,19 @@ function writeToDataFile(dataPath, data) {
       console.error("Error writing data");
     } else {
       console.log("Success writing data");
+    }
+  });
+}
+
+export function deleteFromDataFile(dataPath, data) {
+  var defaultData = getData(dataPath);
+
+  data.forEach((deletedObj) => {
+    const index = defaultData.findIndex((obj) => obj.id === deletedObj.id);
+
+    if (index !== -1) {
+      defaultData[index].isDeleted = true;
+      writeToDataFile(dataPath, defaultData);
     }
   });
 }

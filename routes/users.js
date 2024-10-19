@@ -31,8 +31,6 @@ router.put("/", (req, res) => {
 
     res.status(200).json({ message: "Data added successfully!" });
   } catch (error) {
-    console.error("Error writing to file:", error);
-
     res.status(500).json({ message: "Internal server error" });
   }
 });
@@ -43,6 +41,18 @@ router.patch("/update", (req, res) => {
   const updatedUsers = uh.updateUsers(data);
 
   res.send(updatedUsers);
+});
+
+//DELETE USER
+router.delete("/delete", (req, res) => {
+  const queryParams = req.query;
+
+  try {
+    uh.deleteUsers(queryParams);
+    res.status(200).json({ message: "Data deleted!" });
+  } catch (error) {
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 });
 
 export default router;

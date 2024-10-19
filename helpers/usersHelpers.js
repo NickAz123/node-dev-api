@@ -3,7 +3,8 @@ import * as fh from "../helpers/fileHelpers.js";
 const filePath = "./data/users.json";
 
 export function getUsers() {
-  return fh.getData(filePath);
+  var users = fh.getData(filePath);
+  return users.filter((user) => user.isDeleted != true);
 }
 
 export function getUser(params) {
@@ -46,4 +47,10 @@ export function updateUsers(data) {
   if (foundData) {
     fh.updateDataFiles(filePath, usersArr);
   }
+}
+
+export function deleteUsers(params) {
+  const users = getUser(params);
+
+  fh.deleteFromDataFile(filePath, users);
 }
