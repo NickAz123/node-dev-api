@@ -8,7 +8,7 @@ export function getUsers() {
 }
 
 export function getUser(params) {
-  const usersArr = fh.getData(filePath);
+  const usersArr = getUsers();
 
   const resultsArr = usersArr.filter((obj) => {
     return Object.keys(params).every((key) => {
@@ -24,7 +24,7 @@ export function getUser(params) {
 }
 
 export function updateUsers(data) {
-  const usersArr = fh.getData(filePath);
+  const usersArr = getUsers();
   var foundData = false;
 
   data.forEach((userObj) => {
