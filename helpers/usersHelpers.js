@@ -11,6 +11,10 @@ export function getUser(params) {
 
   const resultsArr = usersArr.filter((obj) => {
     return Object.keys(params).every((key) => {
+      if (typeof obj[key] == "string") {
+        return obj[key].toLowerCase().includes(params[key].toLowerCase());
+      }
+
       return obj[key] == params[key];
     });
   });
