@@ -7,17 +7,11 @@ export function getUsers() {
   return users.filter((user) => user.isDeleted != true);
 }
 
-export function getUser(params) {
+export function getUser(userId) {
   const usersArr = getUsers();
 
   const resultsArr = usersArr.filter((obj) => {
-    return Object.keys(params).every((key) => {
-      if (typeof obj[key] == "string") {
-        return obj[key].toLowerCase().includes(params[key].toLowerCase());
-      }
-
-      return obj[key] == params[key];
-    });
+    return obj["id"] == userId;
   });
 
   return resultsArr;

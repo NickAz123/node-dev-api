@@ -15,9 +15,9 @@ router.get("/", (req, res) => {
 });
 
 //GET SINGLE USER
-router.get("/user", (req, res) => {
-  const queryParams = req.query;
-  const user = uh.getUser(queryParams);
+router.get("/user/:id", (req, res) => {
+  const userId = req.params.id;
+  const user = uh.getUser(userId);
   res.send(user);
 });
 
