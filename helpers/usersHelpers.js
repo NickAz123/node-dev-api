@@ -1,10 +1,11 @@
 import * as fh from "../helpers/fileHelpers.js";
+import * as jh from "../helpers/jsHelpers.js";
 
 const filePath = "./data/users.json";
 
 export function getUsers() {
   var users = fh.getData(filePath);
-  return users.filter((user) => user.isDeleted != true);
+  return getSafeUsersArray(users);
 }
 
 export function getUser(userId) {
@@ -45,4 +46,10 @@ export function updateUsers(data) {
 
 export function deleteUsers(idArray) {
   fh.deleteFromDataFile(filePath, idArray);
+}
+
+export function getSafeUsersArray(users) {
+  const keysToRemove = ["password", "passwordSalt", "passwordPepper"];
+
+  return jh.cleanArray(users, keysToRemove);
 }
