@@ -23,15 +23,16 @@ router.get("/user/:id", (req, res) => {
 
 //POST PATHS
 //ADD USER
-router.put("/", (req, res) => {
-  const data = req.body;
+router.put("/", async (req, res) => {
+  var data = req.body;
+  data = await uh.hashPassword(data);
 
   try {
     fh.addToDataFile(filePath, data);
 
     res.status(200).json({ message: "Data added successfully!" });
   } catch (error) {
-    res.status(500).json({ message: "Internal server error" });
+    res.status(500).json({ message: "Internal server error" + error });
   }
 });
 
@@ -41,6 +42,21 @@ router.patch("/update", (req, res) => {
   const updatedUsers = uh.updateUsers(data);
 
   res.send(updatedUsers);
+});
+
+//UPDATE PASSWORD
+router.patch("/:id/update-password", (req, res) => {
+  const data = req.body;
+  const userId = req.params.id;
+
+  const user = uh.getUser(userId);
+  
+  // if(user){
+  //   try {
+  //     const updatedUser = uh.updateUserPassword(user, data);
+
+  //   }
+  // }
 });
 
 //DELETE USERS

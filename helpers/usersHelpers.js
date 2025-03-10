@@ -1,5 +1,6 @@
 import * as fh from "../helpers/fileHelpers.js";
 import * as jh from "../helpers/jsHelpers.js";
+import * as bh from "../helpers/bcryptHelpers.js";
 
 const filePath = "./data/users.json";
 
@@ -42,6 +43,20 @@ export function updateUsers(data) {
   if (foundData) {
     fh.updateDataFiles(filePath, usersArr);
   }
+}
+
+export function updateUserPassword(user, data){
+  const {newPassword, currentPassword} = data;
+
+  const currentPasswordIsValid = bh.comparePassword(currentPassword, user.password);
+
+
+}
+
+export async function hashPassword(user)
+{
+  user.password = await bh.hashPassword(user.password);
+  return user;
 }
 
 export function deleteUsers(idArray) {

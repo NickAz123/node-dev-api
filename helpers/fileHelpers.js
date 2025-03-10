@@ -19,9 +19,10 @@ export function addToDataFile(dataPath, reqBody) {
   // const defaultData = readFileSync(dataPath, "utf-8");
   // const defaultDataJson = JSON.parse(defaultData);
 
-  const defaultDataJson = getData(datapath);
+  const defaultDataJson = getData(dataPath);
 
   const newData = incrementId(defaultDataJson, reqBody);
+
   defaultDataJson.push(newData);
 
   writeToDataFile(dataPath, defaultDataJson);
