@@ -37,5 +37,16 @@
     "dateCreated": "",
     "lastUpdated": "toy",
     "isDeleted": false
+  },
+  {
+    "firstName": "Harold",
+    "lastName": "Foster",
+    "userName": "hryfoster",
+    "password": "$2b$10$SNl2CDZULyiT8IpJpASrD.eG.tJ8r3H4tTV4ZgKvbWXpCVzdrwtHO",
+    "passwordSalt": "",
+    "passwordPepper": "",
+    "email": "",
+    "dateCreated": "",
+    "id": 4
   }
 ]

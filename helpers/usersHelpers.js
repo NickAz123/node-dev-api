@@ -4,11 +4,20 @@ import * as bh from "../helpers/bcryptHelpers.js";
 
 const filePath = "./data/users.json";
 
+//Gets all users in the data struct
 export function getUsers() {
+  var users = fh.getData(filePath);
+  return users;
+}
+
+
+//Gets all users in the data struct with no passwords
+export function getUsersSafe(){
   var users = fh.getData(filePath);
   return getSafeUsersArray(users);
 }
 
+//Gets a single user in the data struct
 export function getUser(userId) {
   const usersArr = getUsers();
 
@@ -16,9 +25,21 @@ export function getUser(userId) {
     return obj["id"] == userId;
   });
 
-  return resultsArr;
+  return resultsArr[0];
 }
 
+//Gets a single user in the data struct with no passwords
+export function getUserSafe(userId) {
+  const usersArr = getUsersSafe();
+
+  const resultsArr = usersArr.filter((obj) => {
+    return obj["id"] == userId;
+  });
+
+  return resultsArr[0];
+}
+
+//Updates data struct from an array of users
 export function updateUsers(data) {
   const usersArr = getUsers();
   var foundData = false;
@@ -45,26 +66,32 @@ export function updateUsers(data) {
   }
 }
 
-export function updateUserPassword(user, data){
-  const {newPassword, currentPassword} = data;
-
-  const currentPasswordIsValid = bh.comparePassword(currentPassword, user.password);
-
-
-}
-
-export async function hashPassword(user)
-{
-  user.password = await bh.hashPassword(user.password);
-  return user;
-}
-
+//Deletes users from an array of ID's
 export function deleteUsers(idArray) {
   fh.deleteFromDataFile(filePath, idArray);
 }
 
-export function getSafeUsersArray(users) {
+//Private function that removes password keys from an array of user objects
+function getSafeUsersArray(users) {
   const keysToRemove = ["password", "passwordSalt", "passwordPepper"];
 
   return jh.cleanArray(users, keysToRemove);
+
+}
+
+//Password Handling using bcrypt
+export async function userPasswordMatch(currentPassword, inputPassword)
+{
+  const currentPasswordIsValid = await bh.comparePassword(inputPassword, currentPassword);
+  return currentPasswordIsValid;
+}
+
+export async function hashNewUserPassword(user)
+{
+  user.password = await hashPassword(user.password);
+  return user;
+}
+
+export async function hashPassword(password){
+  return await bh.hashPassword(password);
 }

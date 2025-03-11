@@ -25,7 +25,7 @@ router.get("/user/:id", (req, res) => {
 //ADD USER
 router.put("/", async (req, res) => {
   var data = req.body;
-  data = await uh.hashPassword(data);
+  data = await uh.hashNewUserPassword(data);
 
   try {
     fh.addToDataFile(filePath, data);
@@ -45,18 +45,27 @@ router.patch("/update", (req, res) => {
 });
 
 //UPDATE PASSWORD
-router.patch("/:id/update-password", (req, res) => {
+router.patch("/:id/update-password", async (req, res) => {
   const data = req.body;
   const userId = req.params.id;
-
   const user = uh.getUser(userId);
   
-  // if(user){
-  //   try {
-  //     const updatedUser = uh.updateUserPassword(user, data);
+  if(await uh.userPasswordMatch(user.password, data.currentPassword)){
+    user.password = await uh.hashPassword(data.newPassword);
 
-  //   }
-  // }
+    try
+    {
+      uh.updateUsers([user]);
+      const updatedUser = uh.getUserSafe(userId);
+
+      res.send(updatedUser);
+    } catch(error){
+      res.status(500).json({message : "Could not update user password"});
+    }
+    
+  } else {
+    res.status(500).json({message : "Password Mismatch"});
+  }
 });
 
 //DELETE USERS
