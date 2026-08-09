@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "fs";
 
-//Generic function used to get data from a specified data object
+//Generic function used to get data from a specified JSON data object
 export function getData(path) {
   const data = readFileSync(path, "utf-8");
   return JSON.parse(data);
