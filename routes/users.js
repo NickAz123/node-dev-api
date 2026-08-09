@@ -10,14 +10,14 @@ const router = express.Router();
 //GET PATHS
 //GET ALL USERS
 router.get("/", (req, res) => {
-  const users = uh.getUsers();
+  const users = uh.getUsersSafe();
   res.send(users);
 });
 
 //GET SINGLE USER
 router.get("/user/:id", (req, res) => {
   const userId = req.params.id;
-  const user = uh.getUser(userId);
+  const user = uh.getUserSafe(userId);
   res.send(user);
 });
 

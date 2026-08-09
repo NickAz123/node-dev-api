@@ -39,7 +39,7 @@ export function getUserSafe(userId) {
   return resultsArr[0];
 }
 
-//Updates data struct from an array of users
+//Updates data struct from an array of users, will not update password
 export function updateUsers(data) {
   const usersArr = getUsers();
   var foundData = false;
@@ -49,10 +49,7 @@ export function updateUsers(data) {
 
     if (index !== -1) {
       for (let key in userObj) {
-        if (
-          userObj.hasOwnProperty(key) &&
-          usersArr[index][key] !== userObj[key]
-        ) {
+        if (userObj.hasOwnProperty(key) && usersArr[index][key] !== userObj[key]) {
           usersArr[index][key] = userObj[key];
         }
       }
