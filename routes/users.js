@@ -15,7 +15,7 @@ router.get("/", (req, res) => {
 });
 
 //GET SINGLE USER
-router.get("/user/:id", (req, res) => {
+router.get("/:id", (req, res) => {
   const userId = req.params.id;
   const user = uh.getUserSafe(userId);
   res.send(user);
@@ -49,22 +49,20 @@ router.patch("/:id/update-password", async (req, res) => {
   const data = req.body;
   const userId = req.params.id;
   const user = uh.getUser(userId);
-  
-  if(await uh.userPasswordMatch(user.password, data.currentPassword)){
+
+  if (await uh.userPasswordMatch(user.password, data.currentPassword)) {
     user.password = await uh.hashPassword(data.newPassword);
 
-    try
-    {
+    try {
       uh.updateUsers([user]);
       const updatedUser = uh.getUserSafe(userId);
 
       res.send(updatedUser);
-    } catch(error){
-      res.status(500).json({message : "Could not update user password"});
+    } catch (error) {
+      res.status(500).json({ message: "Could not update user password" });
     }
-    
   } else {
-    res.status(500).json({message : "Password Mismatch"});
+    res.status(500).json({ message: "Password Mismatch" });
   }
 });
 
@@ -77,6 +75,18 @@ router.delete("/delete", (req, res) => {
     res.status(200).json({ message: "Data deleted!" });
   } catch (error) {
     res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+//DELETE USER
+router.delete("/delete/:id", (req, res) => {
+  const id = req.params.id;
+
+  try {
+    uh.deleteUsers([id]);
+    res.status(200).json({ message: "Data Deleted!" });
+  } catch (error) {
+    res.status(500).json({ message: "Ineternal Server Error" });
   }
 });
 

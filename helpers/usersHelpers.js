@@ -10,9 +10,8 @@ export function getUsers() {
   return users;
 }
 
-
 //Gets all users in the data struct with no passwords
-export function getUsersSafe(){
+export function getUsersSafe() {
   var users = fh.getData(filePath);
   return getSafeUsersArray(users);
 }
@@ -49,7 +48,10 @@ export function updateUsers(data) {
 
     if (index !== -1) {
       for (let key in userObj) {
-        if (userObj.hasOwnProperty(key) && usersArr[index][key] !== userObj[key]) {
+        if (
+          userObj.hasOwnProperty(key) &&
+          usersArr[index][key] !== userObj[key]
+        ) {
           usersArr[index][key] = userObj[key];
         }
       }
@@ -73,22 +75,22 @@ function getSafeUsersArray(users) {
   const keysToRemove = ["password", "passwordSalt", "passwordPepper"];
 
   return jh.cleanArray(users, keysToRemove);
-
 }
 
 //Password Handling using bcrypt
-export async function userPasswordMatch(currentPassword, inputPassword)
-{
-  const currentPasswordIsValid = await bh.comparePassword(inputPassword, currentPassword);
+export async function userPasswordMatch(currentPassword, inputPassword) {
+  const currentPasswordIsValid = await bh.comparePassword(
+    inputPassword,
+    currentPassword,
+  );
   return currentPasswordIsValid;
 }
 
-export async function hashNewUserPassword(user)
-{
+export async function hashNewUserPassword(user) {
   user.password = await hashPassword(user.password);
   return user;
 }
 
-export async function hashPassword(password){
+export async function hashPassword(password) {
   return await bh.hashPassword(password);
 }

@@ -39,6 +39,7 @@
     "password": "$2a$10$BOHxAKy.VQ37SQxp86cEBOJOiZLjYRyZ3Avgbxi4yPEYkgxfKFPDS",
     "email": "",
     "dateCreated": "",
-    "id": 4
+    "id": 4,
+    "isDeleted": true
   }
 ]
