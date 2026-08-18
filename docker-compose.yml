@@ -19,8 +19,8 @@ services:
         image: postgres:16-alpine
         environment:
             POSTGRES_DB: devnodedb
-            POSTGRES_USER: devadmin
-            POSTGRES_PASSWORD: devpassword
+            POSTGRES_USER: devnodeadmin
+            POSTGRES_PASSWORD: devnodepassword
         ports:
             - "5432:5432"
         volumes:
