@@ -8,6 +8,7 @@ import * as uh from "../helpers/usersHelpers.js";
 const filePath = "./data/users.json";
 
 import pool from '../db.js'; 
+import { getAllUsers } from "../models/userModels.js";
 
 //GET PATHS
 //GET ALL USERS
@@ -16,8 +17,13 @@ import pool from '../db.js';
 //     res.send(users);
 // });
 router.get("/", async (req, res) => {
-    const users = await pool.query('SELECT * FROM USERS WHERE IS_DELETED = FALSE');
-    res.send(users);
+    try{
+        const users = await getAllUsers();
+        res.json(users);
+    } catch (err){
+        console.log(err);
+        res.status(500).json({error: 'Failed to fetch all users'});
+    }
 });
 
 //GET SINGLE USER
