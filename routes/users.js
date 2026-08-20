@@ -4,11 +4,12 @@ const router = express.Router();
 
 import * as fh from "../helpers/fileHelpers.js";
 import * as uh from "../helpers/usersHelpers.js";
+import * as uModels from "../models/userModels.js";
 
 const filePath = "./data/users.json";
 
 import pool from '../db.js'; 
-import { getAllUsers } from "../models/userModels.js";
+
 
 //GET PATHS
 //GET ALL USERS
@@ -18,7 +19,7 @@ import { getAllUsers } from "../models/userModels.js";
 // });
 router.get("/", async (req, res) => {
     try{
-        const users = await getAllUsers();
+        const users = await uModels.getAllUsers();
         res.json(users);
     } catch (err){
         console.log(err);
@@ -27,10 +28,14 @@ router.get("/", async (req, res) => {
 });
 
 //GET SINGLE USER
-router.get("/:id", (req, res) => {
-    const userId = req.params.id;
-    const user = uh.getUserSafe(userId);
-    res.send(user);
+router.get("/:id", async (req, res) => {
+    try{
+        const user = await uModels.getUserById(req.params.id);
+        res.json(user);
+    } catch (err){
+        console.log(err);
+        res.status(500).json({error: 'Failed to fetch user'});
+    }
 });
 
 //POST PATHS
