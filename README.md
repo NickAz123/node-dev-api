@@ -11,5 +11,6 @@ Express.js (4.21.0)
 bcrypt (5.1.1)
 express-session(1.19.0)
 redis: (6.2.1)
+pg: (8.23.0)
 
 ### Database
