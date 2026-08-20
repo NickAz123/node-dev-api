@@ -1,16 +1,22 @@
 import express from "express";
+const router = express.Router();
+
 
 import * as fh from "../helpers/fileHelpers.js";
 import * as uh from "../helpers/usersHelpers.js";
 
 const filePath = "./data/users.json";
 
-const router = express.Router();
+import pool from '../db.js'; 
 
 //GET PATHS
 //GET ALL USERS
-router.get("/", (req, res) => {
-    const users = uh.getUsersSafe();
+// router.get("/", (req, res) => {
+//     const users = uh.getUsersSafe();
+//     res.send(users);
+// });
+router.get("/", async (req, res) => {
+    const users = await pool.query('SELECT * FROM USERS WHERE IS_DELETED = FALSE');
     res.send(users);
 });
 
