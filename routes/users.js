@@ -4,6 +4,7 @@ const router = express.Router();
 
 import * as fh from "../helpers/fileHelpers.js";
 import * as uh from "../helpers/usersHelpers.js";
+import * as bh from "../helpers/bcryptHelpers.js"
 import * as uModels from "../models/userModels.js";
 
 const filePath = "./data/users.json";
@@ -20,7 +21,7 @@ import pool from '../db.js';
 router.get("/", async (req, res) => {
     try{
         const users = await uModels.getAllUsers();
-        res.json(users);
+        res.status(200).json(users);
     } catch (err){
         console.log(err);
         res.status(500).json({error: 'Failed to fetch all users'});
@@ -31,7 +32,7 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try{
         const user = await uModels.getUserById(req.params.id);
-        res.json(user);
+        res.status(200).json(user);
     } catch (err){
         console.log(err);
         res.status(500).json({error: 'Failed to fetch user'});
@@ -41,15 +42,21 @@ router.get("/:id", async (req, res) => {
 //POST PATHS
 //ADD USER
 router.put("/", async (req, res) => {
-    var data = req.body;
-    data = await uh.hashNewUserPassword(data);
+    const {firstName, lastName, userName, password, email } = req.body;
+
+    if(!firstName || !lastName || !userName || !password || !email){
+        res.status(400).json({message: "All fields required." });
+    }
+
+    const passwordHash = await bh.hashPassword(password);
 
     try {
-        fh.addToDataFile(filePath, data);
+        const userId = await uModels.addUser(firstName, lastName, userName, passwordHash ,email);
 
-        res.status(200).json({ message: "Data added successfully!" });
-    } catch (error) {
-        res.status(500).json({ message: "Internal server error" + error });
+        res.status(200).json({ added: userId });
+    } catch (err) {
+        console.log(err);
+        res.status(500).json({ message: "Internal server error: " + err });
     }
 });
 
@@ -96,14 +103,14 @@ router.delete("/delete", (req, res) => {
 });
 
 //DELETE USER
-router.delete("/delete/:id", (req, res) => {
-    const id = req.params.id;
+router.delete ("/delete/:id", async (req, res) => {
 
     try {
-        uh.deleteUsers([id]);
-        res.status(200).json({ message: "Data Deleted!" });
-    } catch (error) {
-        res.status(500).json({ message: "Ineternal Server Error" });
+        const deletedId = await uModels.softDeleteUser(req.params.id);
+        res.status(200).json({ deleted: req.params.id });
+    } catch (err) {
+        console.log(err)
+        res.status(500).json({ message: "Ineternal Server Error: " + err });
     }
 });
 
