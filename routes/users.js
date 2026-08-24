@@ -54,18 +54,34 @@ router.put("/", async (req, res) => {
         const userId = await uModels.addUser(firstName, lastName, userName, passwordHash ,email);
 
         res.status(200).json({ added: userId });
-    } catch (err) {
-        console.log(err);
-        res.status(500).json({ message: "Internal server error: " + err });
+        } catch (err) {
+        // psql error code for unique_validation failure on unique constraints
+            if (err.code === '23505') {
+                return res.status(409).json({ error: 'Email or username already exists' });
+            }
+
+            console.log(err);
+            res.status(500).json({ message: "Internal server error: " + err });
     }
 });
 
 //UPDATE USER
-router.patch("/update", (req, res) => {
-    const data = req.body;
-    const updatedUsers = uh.updateUsers(data);
+router.patch("/:id", async (req, res) => {
+    try{
+        const updated = await uModels.updateUser(req.params.id, req.body);
 
-    res.send(updatedUsers);
+        if(!updated){
+            return res.status(400).json({error: 'No valid fields present'});
+            res.json(updated);
+        }
+    } catch (err){
+        if (err.code === '23505') {
+            return res.status(409).json({ error: 'Email or username already exists' });
+        }
+
+        console.error(err);
+        res.status(500).json({error:'Failed to update user'})
+    }
 });
 
 //UPDATE PASSWORD

@@ -15,8 +15,44 @@ export async function addUser(firstName, lastName, userName, password, email){
 
     return result.rows;
 }
+
+export async function updateUser(id, fields){
+    const allowedFields = {
+        firstName: "first_name",
+        lastName: "last_name",
+        userName: "user_name",
+        email: "email",
+        password: "password"
+    }
+
+    const setClause = [];
+    const values = [];
+    let paramIndex = 1;
+
+    for (const [key,column] of Object.entries(allowedFields)){
+        if (fields[key] != undefined){
+            setClause.push(`${column} = $${paramIndex}`);
+            values.push(fields[key]);
+            paramIndex++;
+        }
+    }
+
+    if (setClause.length === 0){
+        return null;
+    }
+
+    setClause.push(`last_updated = NOW()`);
+    values.push(id);
+
+    const query = `UPDATE USERS
+    SET ${setClause.join(',')} 
+    WHERE id = $${paramIndex} 
+    RETURNING id, first_name, last_name, user_name, email, last_updated`
+
+    const result = await pool.query(query, values); 
+    return result.rows; 
+}
 export async function softDeleteUser(id){
     const result = await pool.query(`UPDATE USERS SET IS_DELETED = TRUE WHERE ID = $1`, [id]);
-    return result.rows;
 }
 
