@@ -1,22 +1,9 @@
 import express from "express";
 const router = express.Router();
 
-import * as fh from "../helpers/fileHelpers.js";
-import * as uh from "../helpers/usersHelpers.js";
 import * as bh from "../helpers/bcryptHelpers.js"
-import * as uModels from "../models/userModels.js";
+import * as uModels from "../models/userModels.js"; 
 
-const filePath = "./data/users.json";
-
-import pool from '../db.js'; 
-
-
-//GET PATHS
-//GET ALL USERS
-// router.get("/", (req, res) => {
-//     const users = uh.getUsersSafe();
-//     res.send(users);
-// });
 router.get("/", async (req, res) => {
     try{
         const users = await uModels.getAllUsers();
@@ -67,12 +54,13 @@ router.put("/", async (req, res) => {
 //UPDATE USER
 router.patch("/:id", async (req, res) => {
     try{
-        const updated = await uModels.updateUser(req.params.id, req.body);
+        const updatedUser = await uModels.updateUser(req.params.id, req.body);
 
-        if(!updated){
+        if(!updatedUser){
             return res.status(400).json({error: 'No valid fields present'});
-            res.json(updated);
         }
+
+        res.status(200).json(updatedUser)
     } catch (err){
         if (err.code === '23505') {
             return res.status(409).json({ error: 'Email or username already exists' });
@@ -87,16 +75,14 @@ router.patch("/:id", async (req, res) => {
 router.patch("/:id/update-password", async (req, res) => {
     const data = req.body;
     const userId = req.params.id;
-    const user = uh.getUser(userId);
+    const user = await uModels.getUserById(userId);
 
-    if (await uh.userPasswordMatch(user.password, data.currentPassword)) {
-        user.password = await uh.hashPassword(data.newPassword);
+    if (await bh.comparePassword(user.password, data.currentPassword)) {
+        user.password = await bh.hashPassword(data.newPassword);
 
         try {
-            uh.updateUsers([user]);
-            const updatedUser = uh.getUserSafe(userId);
-
-            res.send(updatedUser);
+            const updatedUser = await uModels.updateUser(userId, user);
+            res.status(200).json(updatedUser);
         } catch (error) {
             res.status(500).json({ message: "Could not update user password" });
         }
@@ -105,23 +91,11 @@ router.patch("/:id/update-password", async (req, res) => {
     }
 });
 
-//DELETE USERS
-router.delete("/delete", (req, res) => {
-    const idArray = req.body.ids;
-
-    try {
-        uh.deleteUsers(idArray);
-        res.status(200).json({ message: "Data deleted!" });
-    } catch (error) {
-        res.status(500).json({ message: "Internal Server Error:" + err });
-    }
-});
-
 //DELETE USER
 router.delete ("/delete/:id", async (req, res) => {
     try {
         const deletedId = await uModels.softDeleteUser(req.params.id);
-        res.status(200).json({ deleted: req.params.id });
+        res.status(200).json({ deleted: deletedId});
     } catch (err) {
         console.log(err)
         res.status(500).json({ message: "Ineternal Server Error: " + err });

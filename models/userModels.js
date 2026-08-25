@@ -7,7 +7,7 @@ export async function getAllUsers() {
 
 export async function getUserById(id){
     const result = await pool.query(`SELECT * FROM USERS WHERE ID = $1 AND IS_DELETED = FALSE LIMIT 1`,[id]);
-    return result.rows;
+    return result.rows[0];
 }
 
 export async function addUser(firstName, lastName, userName, password, email){
@@ -50,7 +50,7 @@ export async function updateUser(id, fields){
     RETURNING id, first_name, last_name, user_name, email, last_updated`
 
     const result = await pool.query(query, values); 
-    return result.rows; 
+    return result.rows[0]; 
 }
 export async function softDeleteUser(id){
     const result = await pool.query(`UPDATE USERS SET IS_DELETED = TRUE WHERE ID = $1`, [id]);
