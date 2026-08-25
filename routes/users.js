@@ -1,7 +1,6 @@
 import express from "express";
 const router = express.Router();
 
-
 import * as fh from "../helpers/fileHelpers.js";
 import * as uh from "../helpers/usersHelpers.js";
 import * as bh from "../helpers/bcryptHelpers.js"
@@ -114,13 +113,12 @@ router.delete("/delete", (req, res) => {
         uh.deleteUsers(idArray);
         res.status(200).json({ message: "Data deleted!" });
     } catch (error) {
-        res.status(500).json({ message: "Internal Server Error" });
+        res.status(500).json({ message: "Internal Server Error:" + err });
     }
 });
 
 //DELETE USER
 router.delete ("/delete/:id", async (req, res) => {
-
     try {
         const deletedId = await uModels.softDeleteUser(req.params.id);
         res.status(200).json({ deleted: req.params.id });
