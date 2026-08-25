@@ -7,8 +7,8 @@ services:
             DB_HOST: db
             DB_PORT: 5432
             DB_NAME: devnodedb
-            DB_USER: devadmin
-            DB_PASSWORD: devpassword
+            DB_USER: devnodeadmin
+            DB_PASSWORD: devnodedbpassword
             PORT: 9000
         depends_on:
             db:

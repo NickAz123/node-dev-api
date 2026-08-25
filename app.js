@@ -1,3 +1,4 @@
+import "./env.js";
 import express from "express";
 import session from "express-session";
 
@@ -5,11 +6,9 @@ import { createClient } from "redis";
 import { RedisStore } from "connect-redis";
 
 import bodyParser from "body-parser";
-import dotenv from "dotenv";
 
 import usersRoutes from "./routes/users.js";
 
-dotenv.config();
 const PORT = process.env.PORT;
 const app = express();
 
