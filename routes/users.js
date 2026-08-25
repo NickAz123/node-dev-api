@@ -37,13 +37,13 @@ router.put("/", async (req, res) => {
     const passwordHash = await bh.hashPassword(password);
 
     try {
-        const userId = await uModels.addUser(firstName, lastName, userName, passwordHash ,email);
+        const newUser = await uModels.addUser(firstName, lastName, userName, passwordHash ,email);
 
-        res.status(200).json({ added: userId });
+        res.status(201).json(newUser);
         } catch (err) {
         // psql error code for unique_validation failure on unique constraints
             if (err.code === '23505') {
-                return res.status(409).json({ error: 'Email or username already exists' });
+                return res.status(409).json({ message: 'Email or username already exists' });
             }
 
             console.log(err);
