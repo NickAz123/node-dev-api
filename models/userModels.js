@@ -13,7 +13,7 @@ export async function getUserById(id){
 export async function addUser(firstName, lastName, userName, password, email){
     const result = await pool.query(`INSERT INTO USERS (first_name, last_name, user_name, password, email) VALUES ($1, $2, $3, $4, $5) RETURNING ID`, [firstName, lastName, userName, password, email] )
 
-    return result.rows;
+    return result.rows[0];
 }
 
 export async function updateUser(id, fields){
@@ -21,8 +21,7 @@ export async function updateUser(id, fields){
         firstName: "first_name",
         lastName: "last_name",
         userName: "user_name",
-        email: "email",
-        password: "password"
+        email: "email"
     }
 
     const setClause = [];
@@ -52,7 +51,13 @@ export async function updateUser(id, fields){
     const result = await pool.query(query, values); 
     return result.rows[0]; 
 }
+
+export async function updateUserPassword(id, newPasswordHash){
+    const result = await pool.query(`UPDATE users SET password = $1 WHERE id = $2 RETURNING id`,[newPasswordHash, id]);
+    return result.row[0]
+}
+
 export async function softDeleteUser(id){
-    const result = await pool.query(`UPDATE USERS SET IS_DELETED = TRUE WHERE ID = $1`, [id]);
+    const result = await pool.query(`UPDATE USERS SET IS_DELETED = TRUE WHERE ID = $1 RETURNING id`, [id]);
 }
 

@@ -73,16 +73,17 @@ router.patch("/:id", async (req, res) => {
 
 //UPDATE PASSWORD
 router.patch("/:id/update-password", async (req, res) => {
-    const data = req.body;
+    const currentPassword = req.body.currentPassword;
+    const newPassword = req.body.newPassword;
     const userId = req.params.id;
     const user = await uModels.getUserById(userId);
 
-    if (await bh.comparePassword(user.password, data.currentPassword)) {
-        user.password = await bh.hashPassword(data.newPassword);
+    if (await bh.comparePassword(user.password, currentPassword)) {
+        const newPasswordHash = await bh.hashPassword(newPassword);
 
         try {
-            const updatedUser = await uModels.updateUser(userId, user);
-            res.status(200).json(updatedUser);
+            await uModels.updateUserPassword(userId, newPasswordHash);
+            res.status(204);
         } catch (error) {
             res.status(500).json({ message: "Could not update user password" });
         }

@@ -15,7 +15,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 --USER TABLE INSERTS
 INSERT INTO users (first_name, last_name, user_name, password, email, is_deleted) VALUES
-('Jane', 'Foster', 'jdfoster', '$2b$10$Q9XJ4wU5z0YT9Vus5KIt6u7FPq57wkUPhvQEEkr2CzqjUd1voVina', 'jane.foster@example.com', false),
-('Richard', 'Miller', 'richardm19', '$2a$10$8dPgQuB2vgqH4/UZqO/6k.DzN4v88t1yDjRAAlzFL5Gu0kd9k1CeG', 'richard.miller@example.com', true),
-('Barrys', 'Bonds', 'thebarrybb88', '$2a$10$.h0zC6Sq8qISpkC5YFRWwexc/iKg90sJdMH6zyGhR0EDsaANlfg6.', 'barrys.bonds@example.com', false),
-('Harold', 'Foster', 'hryfoster', '$2a$10$BOHxAKy.VQ37SQxp86cEBOJOiZLjYRyZ3Avgbxi4yPEYkgxfKFPDS', 'harold.foster@example.com', false);
+('Jane', 'Foster', 'jdfoster', '', 'jane.foster@example.com', false),
+('Richard', 'Miller', 'richardm19', '', 'richard.miller@example.com', true),
+('Barrys', 'Bonds', 'thebarrybb88', '', 'barrys.bonds@example.com', false),
+('Harold', 'Foster', 'hryfoster', '', 'harold.foster@example.com', false);
