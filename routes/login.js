@@ -1,8 +1,5 @@
 import express from "express";
 
-import * as fh from "../helpers/fileHelpers.js";
-import * as lh from "../helpers/loginHelpers.js";
-
 const router = express.Router();
 
 // app.post("/", (req, res) => {
