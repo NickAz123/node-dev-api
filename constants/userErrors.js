@@ -19,7 +19,7 @@ export const USER_ERROR_CODES = {
         status: 500,
         message: 'Password mismatched'
     },
-    UNAUTHORIZED: {
+    USER_UNAUTHORIZED: {
         status: 401,
         message: 'You do not have permission to access this resource.'
     }

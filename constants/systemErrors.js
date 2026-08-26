@@ -1,5 +1,5 @@
 export const SYS_ERROR_CODES = {
-    SERVER_ERROR: {
+    SYS_SERVER_ERROR: {
         status: 500,
         message: 'Internal Server Error.'
     },
