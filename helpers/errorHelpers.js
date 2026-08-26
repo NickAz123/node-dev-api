@@ -1,12 +1,13 @@
-import { USER_ERROR_CODES } from '../oonstants/userErrors.js';
-import { SYSTEM_ERROR_CODES } from '../constants/systemErrors.js';
+import { USER_ERROR_CODES } from '../constants/userErrors.js';
+import { SYS_ERROR_CODES } from '../constants/systemErrors.js';
 
-const ALL_ERRORS = { ...USER_ERROR_CODES, ...SYSTEM_ERROR_CODES };
+const ALL_ERRORS = { ...USER_ERROR_CODES, ...SYS_ERROR_CODES };
 
 export const sendError = (res, errorCode, customMessage = null) => {
-  // Find the configuration or default to a standard 500 server error
-  const errorConfig = ALL_ERRORS[errorCode] || SYSTEM_ERRORS.SERVER_ERROR;
+  //Find the configuration or default to a standard 500 server error
+  const errorConfig = ALL_ERRORS[errorCode] || SYS_ERROR_CODES.SERVER_ERROR;
   
+  if(process.env.IS_DEV)
   return res.status(errorConfig.status).json({
     status: errorConfig.status >= 500 ? 'error' : 'fail',
     code: errorCode || 'INTERNAL_SERVER_ERROR',
