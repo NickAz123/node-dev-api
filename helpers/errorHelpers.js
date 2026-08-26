@@ -7,7 +7,6 @@ export const sendError = (res, errorCode, customMessage = null) => {
   //Find the configuration or default to a standard 500 server error
   const errorConfig = ALL_ERRORS[errorCode] || SYS_ERROR_CODES.SERVER_ERROR;
   
-  if(process.env.IS_DEV)
   return res.status(errorConfig.status).json({
     status: errorConfig.status >= 500 ? 'error' : 'fail',
     code: errorCode || 'INTERNAL_SERVER_ERROR',
