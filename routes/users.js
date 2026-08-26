@@ -18,9 +18,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try{
         const user = await uModels.getUserById(req.params.id);
+        if(!user){
+            sendError(res, "USER_NOT_FOUND");
+        }
         res.status(200).json(user);
     } catch (err){
-        sendError(res, "USER_NOT_FOUND");
+        sendError(res, "SYS_SERVER_ERROR");
     }
 });
 
