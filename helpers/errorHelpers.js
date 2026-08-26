@@ -1,7 +1,7 @@
 import { USER_ERROR_CODES } from '../oonstants/userErrors.js';
 import { SYSTEM_ERROR_CODES } from '../constants/systemErrors.js';
 
-const ALL_ERRORS = { ...USER_ERRORS, ...SYSTEM_ERRORS };
+const ALL_ERRORS = { ...USER_ERROR_CODES, ...SYSTEM_ERROR_CODES };
 
 export const sendError = (res, errorCode, customMessage = null) => {
   // Find the configuration or default to a standard 500 server error
@@ -12,4 +12,5 @@ export const sendError = (res, errorCode, customMessage = null) => {
     code: errorCode || 'INTERNAL_SERVER_ERROR',
     message: customMessage || errorConfig.message
   });
+
 };
