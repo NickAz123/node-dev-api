@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 
+import { sendError } from "../helpers/errorHelpers.js";
 import * as bh from "../helpers/bcryptHelpers.js"
 import * as uModels from "../models/userModels.js"; 
 
@@ -9,8 +10,7 @@ router.get("/", async (req, res) => {
         const users = await uModels.getAllUsers();
         res.status(200).json(users);
     } catch (err){
-        console.log(err);
-        res.status(500).json({error: 'Failed to fetch all users'});
+        sendError(res, "SYS_SERVER_ERROR");   
     }
 });
 
@@ -18,10 +18,12 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
     try{
         const user = await uModels.getUserById(req.params.id);
+        if(!user){
+            sendError(res, "USER_NOT_FOUND");
+        }
         res.status(200).json(user);
     } catch (err){
-        console.log(err);
-        res.status(500).json({error: 'Failed to fetch user'});
+        sendError(res, "SYS_SERVER_ERROR");
     }
 });
 
@@ -31,23 +33,22 @@ router.put("/", async (req, res) => {
     const {firstName, lastName, userName, password, email } = req.body;
 
     if(!firstName || !lastName || !userName || !password || !email){
-        res.status(400).json({message: "All fields required." });
+        sendError(res, "USER_OBJECT_INVALID");
     }
 
     const passwordHash = await bh.hashPassword(password);
 
     try {
-        const userId = await uModels.addUser(firstName, lastName, userName, passwordHash ,email);
-
-        res.status(200).json({ added: userId });
-        } catch (err) {
+        const newUser = await uModels.addUser(firstName, lastName, userName, passwordHash ,email);
+        res.status(201).json(newUser);
+    } catch (err) {
+        
         // psql error code for unique_validation failure on unique constraints
-            if (err.code === '23505') {
-                return res.status(409).json({ error: 'Email or username already exists' });
-            }
+        if (err.code === '23505') {
+            sendError(res, "USER_ALREADY_EXISTS");
+        }
 
-            console.log(err);
-            res.status(500).json({ message: "Internal server error: " + err });
+        sendError(res, "SYS_SERVER_ERROR");
     }
 });
 
@@ -57,17 +58,13 @@ router.patch("/:id", async (req, res) => {
         const updatedUser = await uModels.updateUser(req.params.id, req.body);
 
         if(!updatedUser){
-            return res.status(400).json({error: 'No valid fields present'});
+            sendError(res, "USER_OBJECT_INVALID");
         }
 
-        res.status(200).json(updatedUser)
+        res.status(200).json(updatedUser);
+
     } catch (err){
-        if (err.code === '23505') {
-            return res.status(409).json({ error: 'Email or username already exists' });
-        }
-
-        console.error(err);
-        res.status(500).json({error:'Failed to update user'})
+        sendError(res, "USER_UPDATE_FAIL");
     }
 });
 
@@ -85,21 +82,20 @@ router.patch("/:id/update-password", async (req, res) => {
             await uModels.updateUserPassword(userId, newPasswordHash);
             res.status(204);
         } catch (error) {
-            res.status(500).json({ message: "Could not update user password" });
+            sendError(res, "USER_UPDATE_FAIL");
         }
     } else {
-        res.status(500).json({ message: "Password Mismatch" });
+        sendError(res, "USER_PASSWORD_MISMATCH");
     }
 });
 
 //DELETE USER
 router.delete ("/delete/:id", async (req, res) => {
     try {
-        const deletedId = await uModels.softDeleteUser(req.params.id);
-        res.status(200).json({ deleted: deletedId});
+        await uModels.softDeleteUser(req.params.id);
+        res.status(204);
     } catch (err) {
-        console.log(err)
-        res.status(500).json({ message: "Ineternal Server Error: " + err });
+        sendError(res, "SYS_SERVER_ERROR");
     }
 });
 
