@@ -47,6 +47,10 @@ router.put("/", async (req, res) => {
         if (err.code === '23505') {
             sendError(res, "USER_ALREADY_EXISTS");
         }
+        // psql error code for not null violation
+        if (err.code === '23502'){
+            sendError(res, "USER_FIELD_EMPTY");
+        }
 
         sendError(res, "SYS_SERVER_ERROR");
     }
