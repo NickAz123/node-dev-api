@@ -2,16 +2,16 @@
 
 `v1.0.0`
 
-This is a feature rich, pre-configured `Node/Express` API template that you can use to kickstart development of your own API, project or application right out the gate. It comes packaged in addition with a containerzied `Postgres` environment and database configuration. In a few simple steps, you can spin up a working API and database that you can fully customize, configure, and scale to your liking with a straightforward and maintainable structure. This guide will step you through the setup, and then walk you through the setup to give you all the information you need to start making this API yours.
+This is a feature rich, pre-configured `Node/Express` API template that you can use to kickstart development of your own API, project or application right off the bat. It comes packaged with a containerzied `Postgres` environment and database configuration. In a few simple steps, you can spin up a working API and database that you can fully customize, configure, and scale to your liking with a straightforward, maintainable structure. This guide will step you through the setup and components to give you all the information you need to start making this API yours.
 
 ## Features
 
 - A simple, easy to understand `Node/Express` API that spins up in seconds.
 - A pre-configrued, containerized `Postgres` database that builds, scaffolds and runs alongside the API. Easy, customizable schema. Simply scaffold and modify the _init_ file to your specification.
 - Comes packaged with pre-configured `redis` and `express-session` to handle session data and user authentication; No need to waste time on setting it up.
-- `bcrypt` enabled to handle password hashing and comparison right out the box.
+- `bcrypt` enabled to handle password hashing and comparison out the box.
 - Configured to run either in _development_ mode (API code runs locally, databse runs containerized) or _production_ mode (API and database both get containerized).
-- Easy configuration script commands setup to run in either mode, re-scaffold your database, reset the containers, query the database and more,
+- Easy configuration script commands setup to re-scaffold your database, reset the containers, query the database and more,
 
 ## Table of Contents
 
@@ -39,7 +39,7 @@ This is a feature rich, pre-configured `Node/Express` API template that you can 
 |pg|8.23.0|
 |dotenv|16.4.5|
 
-_The `docker image` for the container runs the same Node.js version, and currently `Postgres 16`_.
+_The `docker image` for the container runs the same Node.js version, and currently `Postgres:16-alpine`_.
 
 ## Setup Guide
 
@@ -49,7 +49,7 @@ Before anything, be sure to have `Docker` and `Node.js` installed in your enviro
 
 Pull the repository to your local machine (using any method, `git clone` recommended).
 
-Create your own empty repository in your Github, and take it's url and run a mirrored push
+Create your own empty repository in your Github, take it's url, and run a mirrored push
 
 ```bash
 git push --mirror https://{your-repository}.com
@@ -63,7 +63,7 @@ Run the npm install using the following command...
 npm install 
 ```
 
-After pulling, create your own `.env` file, using the `!EXAMPLE.env` file as a start for the properties you need.
+Create your own `.env` file, using the `!EXAMPLE.env` file as a start for the properties you need.
 
 ```env
 //used by REDIS to sign the session cookie, can be anything
@@ -83,7 +83,7 @@ PORT=9000
 
 In the `Dockerfile`, you can configure the image that your API will run. This is used only in a production deployment, where the API is containerzied alongside the database. When developing locally, the configuration from your `.env` file will be used.
 
-The `docker-compose.yml` contains the instructions for spinning up the API. In a local development scenario, only the `db` service container will run. In a production deployment, the `api` service container will run as well. They are configured to map to eachother in such a case through port `5432`. The environment variables in the `db` service must match the `api` service variables (in production), or the `.env` variables for local development. They can, however, be whatever you'd want them to be.
+The `docker-compose.yml` contains the instructions for spinning up the API. In a local development scenario, only the `db` service container will run. In a production deployment, the `api` service container will run as well. They are configured to map to eachother in such a case through port `5432`. The environment variables in the `db` service must match the `api` service variables (in production), or the `.env` variables for local development. They can, however, be whatever you want them to be.
 
 Finally spin up the project using the `npm run dev` command to run the API locally, and the `Postgres` database in a docker container. The configuration already establishes the connection between the API and DB.
 
@@ -133,7 +133,7 @@ docker compose esec db psql -U devnodeadmin -d devnodedb
 
 ## Routes
 
-This example API only has routes for an example `users` table and simple CRUD operations. You can ofcourse expand to as many routes as you see fit. Use this simply as a starting point to reference syntax, expected received data and expected responses. Below is a short documented section about how each of the currently provided routes work.
+This example API only has routes for an example `users` table and simple CRUD operations. You can ofcourse expand, add and modify these however you'd like. Use this as a starting point to reference syntax, expected data structs and responses. Below is a short documented section about how each of the currently provided routes work.
 
 ### (GET) /users
 
@@ -224,4 +224,59 @@ Success Code: `201` | Failure Code: `400, 409, 500`
 
 ### (PATCH) users/:id
 
-Updates a user on the database.
+Updates a user on the database of a given id. It will accept a JSON object with any combination of the following fields below. If no valid fields are found, or a provided field has no value, it will send a `400` code.
+
+```json
+{
+    "email": "",
+    "firstName": "",
+    "lastName": "",
+    "userName": ""
+}
+```
+
+#### Example Response Object
+
+```json
+{
+    "id": 4,
+    "first_name": "Harold",
+    "last_name": "Foster",
+    "user_name": "hryfoster",
+    "email": "ctier@example.com",
+    "last_updated": "2026-08-27T06:36:49.122Z"
+}
+```
+
+Success Code: `200` | Failure Code: `400`
+
+### (PATCH) users/:id/update-password
+
+Updates the password of the given user matching the `id` parameter. It accepts a JSON with the `newPassword` and `currentPassword` fields. If any of those fields are missing, it will send a `400` code. An example expected JSON object is shown below. This route will call the model to automatically compare and generate hashes. Returns an empty object on success.
+
+```json
+{
+    "currentPassword": "spartan24",
+    "newPassword": "spartan25"
+}
+```
+
+#### Example Response Object
+
+```json
+(empty)
+```
+
+Success Code: `204` | Failure Code: `400, 500`
+
+### (DELETE) users/delete/:id
+
+Sets the `is_deleted` flag on the specified user of `id` to `true`. Does not actually remove the user from the database. Sends an empty object on success.
+
+#### Example Response Object
+
+```json
+(empty)
+```
+
+Success Code: `204` | Failure Code: `500`
