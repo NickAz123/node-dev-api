@@ -20,6 +20,7 @@ router.get("/:id", async (req, res) => {
         const user = await uModels.getUserById(req.params.id);
         if(!user){
             sendError(res, "USER_NOT_FOUND");
+            return;
         }
         res.status(200).json(user);
     } catch (err){
@@ -34,6 +35,7 @@ router.put("/", async (req, res) => {
 
     if(!firstName || !lastName || !userName || !password || !email){
         sendError(res, "USER_OBJECT_INVALID");
+        return;
     }
 
     const passwordHash = await bh.hashPassword(password);
@@ -63,6 +65,7 @@ router.patch("/:id", async (req, res) => {
 
         if(!updatedUser){
             sendError(res, "USER_OBJECT_INVALID");
+            return;
         }
 
         res.status(200).json(updatedUser);
@@ -79,12 +82,17 @@ router.patch("/:id/update-password", async (req, res) => {
     const userId = req.params.id;
     const user = await uModels.getUserById(userId);
 
+    if(!currentPassword || !newPassword){
+        sendError(res, "USER_FIELD_EMPTY");
+        return;
+    }
+
     if (await bh.comparePassword(user.password, currentPassword)) {
         const newPasswordHash = await bh.hashPassword(newPassword);
 
         try {
             await uModels.updateUserPassword(userId, newPasswordHash);
-            res.status(204);
+            res.sendStatus(204);
         } catch (error) {
             sendError(res, "USER_UPDATE_FAIL");
         }
@@ -94,10 +102,18 @@ router.patch("/:id/update-password", async (req, res) => {
 });
 
 //DELETE USER
-router.delete ("/delete/:id", async (req, res) => {
+router.delete ("/:id/delete", async (req, res) => {
+
+    const user = await uModels.getUserById(req.params.id);
+    
+    if(!user){
+        sendError(res, "USER_NOT_FOUND");
+        return;
+    }
+    
     try {
         await uModels.softDeleteUser(req.params.id);
-        res.status(204);
+        res.sendStatus(204);
     } catch (err) {
         sendError(res, "SYS_SERVER_ERROR");
     }
