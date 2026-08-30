@@ -1,16 +1,282 @@
-# node-dev-api
+# NODE/EXPRESS DEVELOPMENT API
 
-Boilerplate/Faux API and Database combo useful for local testing applications and content
+`v1.0.0`
 
-## Components
+This is a feature rich, pre-configured `Node/Express` API template that you can use to kickstart development of your own API, project or application right off the bat. It comes packaged with a containerzied `Postgres` environment and database configuration. In a few simple steps, you can spin up a working API and database that you can fully customize, configure, and scale to your liking with a straightforward, maintainable structure. This guide will step you through the setup and components to give you all the information you need to start making this API yours.
 
-### API
+## Features
 
-Node.js (24.19.0)
-Express.js (4.21.0)
-bcrypt (5.1.1)
-express-session(1.19.0)
-redis: (6.2.1)
-pg: (8.23.0)
+- A simple, easy to understand `Node/Express` API that spins up in seconds.
+- A pre-configrued, containerized `Postgres` database that builds, scaffolds and runs alongside the API. Easy, customizable schema. Simply scaffold and modify the _init_ file to your specification.
+- Comes packaged with pre-configured `redis` and `express-session` to handle session data and user authentication; No need to waste time on setting it up.
+- `bcrypt` enabled to handle password hashing and comparison out the box.
+- Configured to run either in _development_ mode (API code runs locally, databse runs containerized) or _production_ mode (API and database both get containerized).
+- Easy configuration script commands setup to re-scaffold your database, reset the containers, query the database and more,
 
-### Database
+## Table of Contents
+
+1. [Components and Versioning](#components-and-versioning)
+2. [Setup Guide](#setup-guide)
+3. [Scripts](#scripts)
+4. [Routes](#routes)
+5. [Component Guides](#components)
+    - [Docker](#docker)
+    - [Postgres](#postgres)
+    - [bcrypt](#bcrypt)
+    - [Express Sessions and Redis](#express-and-redis) _(WIP)_
+    - [Error Handling](#error-handling)
+
+## Components and Versioning
+
+|Package|Version|
+|-------|-------|
+|Node.js|24.19.0|
+|Express.js|4.21.0|
+|bcrypt|5.1.1|
+|express-session|1.19.0|
+|redis|6.2.1|
+|connect-redis|10.0.0|
+|pg|8.23.0|
+|dotenv|16.4.5|
+
+_The `docker image` for the container runs the same Node.js version, and currently `Postgres:16-alpine`_.
+
+## Setup Guide
+
+```txt
+Before anything, be sure to have `Docker` and `Node.js` installed in your environment
+```
+
+Pull the repository to your local machine (using any method, `git clone` recommended).
+
+Create your own empty repository in your Github, take it's url, and run a mirrored push
+
+```bash
+git push --mirror https://{your-repository}.com
+```
+
+Delete the local folder, and then re-pull from your new repository.
+
+Run the npm install using the following command...
+
+```bash
+npm install 
+```
+
+Create your own `.env` file, using the `!EXAMPLE.env` file as a start for the properties you need.
+
+```env
+//used by REDIS to sign the session cookie, can be anything
+SECRET_KEY=my-secret-key
+
+//Configuration for the postgres connection from your API to the container. You can change these to whatever you'd like, so long as you match what is configured in the docker-compose.yml db configuration.
+
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=devnodedb
+DB_USER=devnodeadmin
+DB_PASSWORD=devnodepassword
+
+//The port you'd like this API to run on
+PORT=9000
+```
+
+In the `Dockerfile`, you can configure the image that your API will run. This is used only in a production deployment, where the API is containerzied alongside the database. When developing locally, the configuration from your `.env` file will be used.
+
+The `docker-compose.yml` contains the instructions for spinning up the API. In a local development scenario, only the `db` service container will run. In a production deployment, the `api` service container will run as well. They are configured to map to eachother in such a case through port `5432`. The environment variables in the `db` service must match the `api` service variables (in production), or the `.env` variables for local development. They can, however, be whatever you want them to be.
+
+Finally spin up the project using the `npm run dev` command to run the API locally, and the `Postgres` database in a docker container. The configuration already establishes the connection between the API and DB.
+
+```bash
+npm run dev
+```
+
+## Scripts
+
+The following scripts allow you to control the API and db efficiently from the terminal by abstracting commonly used, wordy bash commands. Simply run these in the root of your project directory. _Found in the `package.json`_.
+
+`npm run start` - starts up the API only, runs the following command...
+
+```bash
+node app.js
+```
+
+`npm run dev` - starts up the API locally with _nodemon_ for auto restart on changes, and runs the docker container for the `db` service. Runs the following command...
+
+```bash
+docker compose up -d db && nodemon app.js
+```
+
+`npm run db:up` - starts up the containerized `db` service only. Runs the following command...
+
+```bash
+docker compose up -d db
+```
+
+`npm run db:down` - stops the `db` service by running the following command...
+
+```bash
+docker compose stop db
+```
+
+`npm run db:reset` - stops the `db` service, unmounts the data, rescaffolds the db, and spins the `db` service back up. Runs the following command...
+
+```bash
+docker compose down -v && docker compose up -d db
+```
+
+`npm run psql` - opens up the `psql` CLI for the database in the container, letting you SQL or modify the runing database via the terminal. You will need to change the user and database names appropriate to your configuration. Runs the following command...
+
+```bash
+docker compose esec db psql -U devnodeadmin -d devnodedb
+```
+
+## Routes
+
+This example API only has routes for an example `users` table and simple CRUD operations. You can ofcourse expand, add and modify these however you'd like. Use this as a starting point to reference syntax, expected data structs and responses. Below is a short documented section about how each of the currently provided routes work.
+
+### (GET) /users
+
+Returns all users in the database that are not deleted (`is_deleted = false`)
+
+#### Example Reponse Object
+
+```json
+[
+    {
+        "id": 1,
+        "first_name": "Jane",
+        "last_name": "Foster",
+        "user_name": "jdfoster",
+        "password": "",
+        "email": "jane.foster@example.com",
+        "date_created": "2026-08-27T00:16:48.694Z",
+        "last_updated": "2026-08-27T00:16:48.694Z",
+        "is_deleted": false
+    },
+    {
+        "id": 3,
+        "first_name": "Barrys",
+        "last_name": "Bonds",
+        "user_name": "thebarrybb88",
+        "password": "",
+        "email": "barrys.bonds@example.com",
+        "date_created": "2026-08-27T00:16:48.694Z",
+        "last_updated": "2026-08-27T00:16:48.694Z",
+        "is_deleted": false
+    }
+]
+```
+
+Success Code: `200` | Failure Code: `500`
+
+### (GET) users/:id
+
+Returns a single user matching the parameter `:id` and not deleted (`is_deleted = false`)
+
+#### Example Response Object
+
+```json
+{
+    "id": 4,
+    "first_name": "Harold",
+    "last_name": "Foster",
+    "user_name": "hryfoster",
+    "password": "",
+    "email": "harold.foster@example.com",
+    "date_created": "2026-08-27T00:16:48.694Z",
+    "last_updated": "2026-08-27T00:16:48.694Z",
+    "is_deleted": false
+}
+```
+
+Success Code: `200` | Failure Code: `500`
+
+### (PUT) users/
+
+Adds a new user to the database, automatically incrementing `id` and hashing the password. It accepts a `json` body with the following fields.
+
+```json
+{
+    "firstName": "",
+    "lastName": "",
+    "userName": "",
+    "password": "",
+    "email": ""
+}
+```
+
+If any fields are missing or empty, it will return a `400` code. If the `email` or `username` fields are not unique to the table, it will return a `409` code. Any other errors will return a `500`.
+
+#### Example Response Object
+
+```json
+{
+    "id": 5,
+    "first_name": "Carmen",
+    "last_name": "Santiago",
+    "user_name": "crmsantiago",
+    "email": "c.santiago@gmail.com"
+}
+```
+
+Success Code: `201` | Failure Code: `400, 409, 500`
+
+### (PATCH) users/:id
+
+Updates a user on the database of a given id. It will accept a JSON object with any combination of the following fields below. If no valid fields are found, or a provided field has no value, it will send a `400` code.
+
+```json
+{
+    "email": "",
+    "firstName": "",
+    "lastName": "",
+    "userName": ""
+}
+```
+
+#### Example Response Object
+
+```json
+{
+    "id": 4,
+    "first_name": "Harold",
+    "last_name": "Foster",
+    "user_name": "hryfoster",
+    "email": "ctier@example.com",
+    "last_updated": "2026-08-27T06:36:49.122Z"
+}
+```
+
+Success Code: `200` | Failure Code: `400`
+
+### (PATCH) users/:id/update-password
+
+Updates the password of the given user matching the `id` parameter. It accepts a JSON with the `newPassword` and `currentPassword` fields. If any of those fields are missing, it will send a `400` code. An example expected JSON object is shown below. This route will call the model to automatically compare and generate hashes. Returns an empty object on success.
+
+```json
+{
+    "currentPassword": "spartan24",
+    "newPassword": "spartan25"
+}
+```
+
+#### Example Response Object
+
+```json
+(empty)
+```
+
+Success Code: `204` | Failure Code: `400, 500`
+
+### (DELETE) users/delete/:id
+
+Sets the `is_deleted` flag on the specified user of `id` to `true`. Does not actually remove the user from the database. Sends an empty object on success.
+
+#### Example Response Object
+
+```json
+(empty)
+```
+
+Success Code: `204` | Failure Code: `500`

@@ -59,5 +59,6 @@ export async function updateUserPassword(id, newPasswordHash){
 
 export async function softDeleteUser(id){
     const result = await pool.query(`UPDATE USERS SET IS_DELETED = TRUE WHERE ID = $1 RETURNING id`, [id]);
-}
+    return result;
+}   
 

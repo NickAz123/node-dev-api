@@ -13,6 +13,9 @@
     "description": "Faux DB/API I use for local testing applications and content",
     "main": "app.js",
     "type": "module",
+    "engines": {
+    "node": ">=24.19.0"
+    },
     "scripts": {
         "start": "node app.js",
         "dev": "docker compose up -d db && nodemon app.js",

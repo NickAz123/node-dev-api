@@ -22,5 +22,9 @@ export const USER_ERROR_CODES = {
     USER_UNAUTHORIZED: {
         status: 401,
         message: 'You do not have permission to access this resource.'
+    },
+    USER_FIELD_EMPTY: {
+        status: 400,
+        message: 'Field cannot be empty'
     }
 }
