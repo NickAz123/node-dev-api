@@ -297,8 +297,33 @@ The database image runs a `Postgres` db, the industry standard when handling rel
 
 ### bcrypt
 
-A node library responsible for hashing passwords with a Blowfish cypher. It is the widely accepted industry standard encyrption cypher.
+A node library responsible for hashing passwords with a Blowfish cypher. It is the widely accepted industry standard encyrption cypher. Its basic functionality is abstracted by the functions in the `helpers/bcryptHelpers.js`. The `comparePassword` function takes in an unhashed `password1` and compares it to a hashed `password2` to check equivalence. The `hashPassword` function accepts an unhashed password and returns it hashed by 10 rounds (which you can change).
 
 ### Error Handling
 
-In order to better maintain error handling, there is a
+In order to better maintain error handling, the `sendError` provides an easy way to send appropriate error codes and mesages.
+
+```javascript
+export const sendError = (res, errorCode, customMessage = null) => {
+  //Find the configuration or default to a standard 500 server error
+  const errorConfig = ALL_ERRORS[errorCode] || SYS_ERROR_CODES.SERVER_ERROR;
+  
+  return res.status(errorConfig.status).json({
+    status: errorConfig.status >= 500 ? 'error' : 'fail',
+    code: errorCode || 'INTERNAL_SERVER_ERROR',
+    message: customMessage || errorConfig.message
+  });
+
+};
+```
+
+`errorCode` references the codes imported from the `constants` folder. This allows you to create custom error objects for different scenarios. By passing in the `errorCode` you create, the function will pick up the associated code and message from the objects that are imported at the top of the `errorHelpers.js` file.
+
+```javascript
+import { USER_ERROR_CODES } from '../constants/userErrors.js';
+import { SYS_ERROR_CODES } from '../constants/systemErrors.js';
+
+const ALL_ERRORS = { ...USER_ERROR_CODES, ...SYS_ERROR_CODES };
+```
+
+If it fails to find any code, it will just send the default `INTERNAL_SERVER_ERROR | 500` code.
