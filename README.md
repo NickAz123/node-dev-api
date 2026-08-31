@@ -2,7 +2,7 @@
 
 `v1.0.0`
 
-This is a feature rich, pre-configured `Node/Express` API template that you can use to kickstart development of your own API, project or application right off the bat. It comes packaged with a containerzied `Postgres` environment and database configuration. In a few simple steps, you can spin up a working API and database that you can fully customize, configure, and scale to your liking with a straightforward, maintainable structure. This guide will step you through the setup and components to give you all the information you need to start making this API yours.
+This is a feature rich, pre-configured `Node/Express` API template that you can use to kickstart development of your own API, project or application right off the bat. It comes packaged with a containerized `Postgres` environment and database configuration. In a few steps, you can spin up a working API and database that you can customize, configure, and scale to your liking with a straightforward, maintainable structure.
 
 ## Features
 
