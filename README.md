@@ -280,3 +280,25 @@ Sets the `is_deleted` flag on the specified user of `id` to `true`. Does not act
 ```
 
 Success Code: `204` | Failure Code: `500`
+
+## Components
+
+### Docker
+
+Docker is the app that is required to spin up the containers on source code startup, both for producton or local development. When the app is started, it will use Docker to spin up a separate environment where the `Postgres` db will function. This means you do not need to install a separate `Postgres` environment on your local machine. Docker MUST be installed on your local machine for this app to run.
+
+The `dockerfile` is only used for production deployments, and crestes a `node` environment to host the API. The database is hosted in a separate environment/container that is configured to connect directly to the `node` environment, local or production.
+
+The `docker-compose` builds the two containers that host the API and Database. When running in development (`npm run dev`), only the database container spins up, and your local environment will run the API.
+
+### Postgres
+
+The database image runs a `Postgres` db, the industry standard when handling relational data. You can customize this app to use a different database depending on your needs (`MySQL` for small web apps for example), by changing the source code and docker files accordingly.
+
+### bcrypt
+
+A node library responsible for hashing passwords with a Blowfish cypher. It is the widely accepted industry standard encyrption cypher.
+
+### Error Handling
+
+In order to better maintain error handling, there is a
